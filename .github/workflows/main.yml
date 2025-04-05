@@ -49,8 +49,7 @@ jobs:
         with:
           args: >
             -Dsonar.projectKey=bookstore-virtual-assistant
-          projectBaseDir: ./
-          scanMetadataReportFile: ./.scannerwork/report-task.txt
+        run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar
           projectBaseDir: ./
           scanMetadataReportFile: ./.scannerwork/report-task.txt
         run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar
