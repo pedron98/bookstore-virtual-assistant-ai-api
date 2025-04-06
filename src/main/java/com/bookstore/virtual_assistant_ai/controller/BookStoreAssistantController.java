@@ -8,8 +8,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Flux;
 
-// This CrossOrigin rule is applied for all endpoints in this controller
-//@CrossOrigin(origins = {"*, http://localhost:8080"})
 @RestController
 @RequestMapping("/bookstore")
 public class BookStoreAssistantController {
@@ -20,8 +18,6 @@ public class BookStoreAssistantController {
         this.chatModel = chatModel;
     }
 
-    // This CrossOrigin rule is applied for all endpoints with http 'Get' verb in this controller
-    // @CrossOrigin(origins = {"http://localhost:8080", "http://www.erudio.com.br"})
     @GetMapping("/informations")
     public String bookStoreChat(@RequestParam(value="message",
             defaultValue="What the top bestsellers of the last years?") String message) {
@@ -47,10 +43,3 @@ public class BookStoreAssistantController {
         return chatModel.stream(message);
     }
 
-    // Returns a Json with detailed information(ideal for send to another clients)
-//    @GetMapping("/informations")
-//    public ChatResponse bookStoreChat(@RequestParam(value="message",
-//            defaultValue="What the top bestsellers of the last years?") String message) {
-//        return chatModel.call(new Prompt(message));
-//    }
-}
