@@ -1,8 +1,7 @@
+name: CI-CD
 on:
   push:
-    branches:
-      - "main"
-      - "feature/**"
+    branches: ["main"]
   workflow_dispatch:
 jobs:
   ci:
@@ -46,7 +45,7 @@ jobs:
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
-        run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=bookstore-virtual-assistant
+        run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:5.1.0.4751:sonar -Dsonar.projectKey=bookstore-virtual-assistant
 
       - name: SonarQube Quality Gate check
         id: sonarqube-quality-gate-check
