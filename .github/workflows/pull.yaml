@@ -3,7 +3,7 @@ on:
   pull_request:
     branches: ["main"]
 jobs:
-  ci:
+  ci-pre-analysis:
     runs-on: ubuntu-latest
     steps:
       - name: Retrieve and Copy the repository code
