@@ -62,4 +62,14 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
+      - name: Build and Push Docker image(Release)
+        uses: docker/build-push-action@v6
+        with:
+          context: ./
+          push: true
+          file: ./Dockerfile
+          tags: |
+            pedroaugustoengineer/bookstore-virtual-assistant-ai-api:latest
+            pedroaugustoengineer/bookstore-virtual-assistant-ai-api:v${{ github.run_number }}
+
 
