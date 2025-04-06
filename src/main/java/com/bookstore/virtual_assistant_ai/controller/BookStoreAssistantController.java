@@ -42,4 +42,5 @@ public class BookStoreAssistantController {
             defaultValue="What the top bestsellers books of the last years?") String message) {
         return chatModel.stream(message);
     }
+}
 
