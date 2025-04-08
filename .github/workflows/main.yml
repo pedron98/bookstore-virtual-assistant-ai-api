@@ -91,13 +91,13 @@ jobs:
 
       - name: Build and Push Docker image(Release)
         uses: docker/build-push-action@v6
-          with:
-            context: ./
-            push: true
-            file: ./Dockerfile
-            tags: |
-              pedroaugustoengineer/bookstore-virtual-assistant-ai-api:latest
-              pedroaugustoengineer/bookstore-virtual-assistant-ai-api:v${{ github.run_number }}
+        with:
+          context: ./
+          push: true
+          file: ./Dockerfile
+          tags: |
+            pedroaugustoengineer/bookstore-virtual-assistant-ai-api:latest
+            pedroaugustoengineer/bookstore-virtual-assistant-ai-api:v${{ github.run_number }}
       
       - name: Run Trivy vulnerability scanner (Docker Image)
         uses: aquasecurity/trivy-action@0.28.0
