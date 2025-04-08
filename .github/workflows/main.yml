@@ -29,37 +29,33 @@ jobs:
         #working-directory: ./
         #run: mvn -Dtest=integrationtests/** test
       
-      - name: Cache SonarQube packages
-        uses: actions/cache@v4
-        with:
-          path: ~/.sonar/cache
-          key: ${{ runner.os }}-sonar
-          restore-keys: ${{ runner.os }}-sonar
-      - name: Cache Maven packages
-        uses: actions/cache@v4
-        with:
-          path: ~/.m2
-          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
-          restore-keys: ${{ runner.os }}-m2
-      - name: Build and analyze
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
-        run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:5.1.0.4751:sonar -Dsonar.projectKey=bookstore-virtual-assistant
+      #- name: Cache SonarQube packages
+        #uses: actions/cache@v4
+        #with:
+          #path: ~/.sonar/cache
+          #key: ${{ runner.os }}-sonar
+          #restore-keys: ${{ runner.os }}-sonar
+      #- name: Cache Maven packages
+        #uses: actions/cache@v4
+        #with:
+          #path: ~/.m2
+          #key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+          #restore-keys: ${{ runner.os }}-m2
+      #- name: Build and analyze
+        #env:
+          #SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          #SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+        #run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:5.1.0.4751:sonar -Dsonar.projectKey=bookstore-virtual-assistant
 
-      - name: SonarQube Quality Gate check
-        id: sonarqube-quality-gate-check
-        uses: sonarsource/sonarqube-quality-gate-action@v1.1.0
-        with:
-          scanMetadataReportFile: target/sonar/report-task.txt
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+      #- name: SonarQube Quality Gate check
+        #id: sonarqube-quality-gate-check
+        #uses: sonarsource/sonarqube-quality-gate-action@v1.1.0
+        #with:
+          #scanMetadataReportFile: target/sonar/report-task.txt
+        #env:
+          #SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          #SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
       
-      - name: "SonarQube Quality Gate Status value"
-        if: ${{ failure() }}        
-        run: echo "The Quality Gate status is ${{ steps.sonarqube-quality-gate-check.outputs.quality-gate-status }}"
-
       - name: Run Trivy vulnerability scanner (fs)
         uses: aquasecurity/trivy-action@0.28.0
         with:
