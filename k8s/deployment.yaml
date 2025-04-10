@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: bookstore-virtual-assistant-ai-api
+spec:
+  replicas: 4
+  selector:
+    matchLabels:
+      app: bookstore-virtual-assistant-ai-api
+  template:
+    metadata:
+      labels:
+        app: bookstore-virtual-assistant-ai-api
+    spec:
+      containers:
+        - name: bookstore-virtual-assistant-ai-api
+          image: pedroaugustoengineer/bookstore-virtual-assistant-ai-api:v${{ github.run_number }}
+          ports:
+            - containerPort: 8080
+          env:
+            - name: OPENAI_API_KEY
+              value: ${{ secrets.OPENAI_API_KEY }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: bookstore-virtual-assistant-ai-api
+spec:
+  type: LoadBalancer
+  ports:
+    - port: 8080
+      targetPort: 8080
+  selector:
+    app: bookstore-virtual-assitant-ai-api
+
