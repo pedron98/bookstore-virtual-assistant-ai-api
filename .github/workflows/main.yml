@@ -60,6 +60,7 @@ jobs:
       
   cd:
     runs-on: ubuntu-latest
+    environment: developer
     needs: [ci]
     steps:
       - name: Retrieve and Copy the repository code
