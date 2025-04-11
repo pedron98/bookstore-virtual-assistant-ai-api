@@ -153,4 +153,48 @@ jobs:
             ./k8s/deployment.yaml
           images: 'pedroaugustoengineer/bookstore-virtual-assistant-ai-api:v${{ github.run_number }}'
 
+  cd-homolog:
+    runs-on: ubuntu-latest
+    environment: homolog
+    needs: [ci]
+    steps:
+      - name: Retrieve and Copy the repository code
+        uses: actions/checkout@v4
+
+      - name: Set K8s Cluster context
+        uses: azure/k8s-set-context@v4
+        with:
+          method: kubeconfig
+          kubeconfig: ${{ secrets.K8S_CONFIG }}
+      
+      - name: Apply Deployment
+        uses: Azure/k8s-deploy@v5
+        with:
+          namespace: "homolog"
+          manifests: |
+            ./k8s/deployment.yaml
+          images: 'pedroaugustoengineer/bookstore-virtual-assistant-ai-api:v${{ github.run_number }}'
+
+  cd-production:
+    runs-on: ubuntu-latest
+    environment: production
+    needs: [ci]
+    steps:
+      - name: Retrieve and Copy the repository code
+        uses: actions/checkout@v4
+
+      - name: Set K8s Cluster context
+        uses: azure/k8s-set-context@v4
+        with:
+          method: kubeconfig
+          kubeconfig: ${{ secrets.K8S_CONFIG }}
+      
+      - name: Apply Deployment
+        uses: Azure/k8s-deploy@v5
+        with:
+          namespace: "production"
+          manifests: |
+            ./k8s/deployment.yaml
+          images: 'pedroaugustoengineer/bookstore-virtual-assistant-ai-api:v${{ github.run_number }}'
+
 
