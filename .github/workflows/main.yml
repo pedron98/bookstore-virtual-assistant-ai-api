@@ -192,7 +192,7 @@ jobs:
       - name: Apply Deployment
         uses: Azure/k8s-deploy@v5
         with:
-          namespace: "production"
+          # namespace: "production"
           manifests: |
             ./k8s/deployment.yaml
           images: 'pedroaugustoengineer/bookstore-virtual-assistant-ai-api:v${{ github.run_number }}'
