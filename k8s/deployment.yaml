@@ -31,5 +31,5 @@ spec:
     - port: 8080
       targetPort: 8080
   selector:
-    app: bookstore-virtual-assitant-ai-api
+    app: bookstore-virtual-assistant-ai-api
 
