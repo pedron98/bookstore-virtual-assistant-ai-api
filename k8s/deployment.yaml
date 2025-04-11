@@ -19,7 +19,7 @@ spec:
             - containerPort: 8080
           env:
             - name: OPENAI_API_KEY
-              value: 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
+              value: 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
 ---
 apiVersion: v1
 kind: Service
