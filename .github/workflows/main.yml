@@ -58,26 +58,6 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
       
-  cd-developer:
-    runs-on: ubuntu-latest
-    environment: developer
-    needs: [ci]
-    steps:
-      - name: Retrieve and Copy the repository code
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-      
-      - name: Setup JDK amazoncorretto-23
-        uses: actions/setup-java@v4
-        with:
-          java-version: '23'
-          distribution: 'corretto'
-          cache: maven
-          
-      - name: Build .jar with Maven
-        run: mvn clean package -DskipTests      
-
       - name: Run Trivy vulnerability scanner (fs)
         uses: aquasecurity/trivy-action@0.28.0
         with:
@@ -138,6 +118,59 @@ jobs:
               echo "</details>"   
             } >> $GITHUB_STEP_SUMMARY
           fi
+      
+  cd-developer:
+    runs-on: ubuntu-latest
+    environment: developer
+    needs: [ci]
+    steps:
+      - name: Retrieve and Copy the repository code
+        uses: actions/checkout@v4     
+
+      - name: Run Trivy vulnerability scanner (fs)
+        uses: aquasecurity/trivy-action@0.28.0
+        with:
+          scan-type: 'fs'
+          scan-ref: '.'
+          format: table
+          scanners: 'vuln,secret,misconfig'
+          output: trivy-results.txt
+          severity: UNKNOWN,CRITICAL,HIGH,MEDIUM,LOW
+          hide-progress: true
+
+      - name: Publish Trivy Output to Summary
+        run: |
+          if [[ -s trivy-results.txt ]]; then
+            {
+              echo "### Security Output (File System)"
+              echo "<details><summary>Click to expand</summary>"
+              echo ""
+              cat trivy-results.txt
+              echo "</details>"   
+            } >> $GITHUB_STEP_SUMMARY
+          fi
+      
+      - name: Run Trivy vulnerability scanner (Docker Image)
+        uses: aquasecurity/trivy-action@0.28.0
+        with:
+          scan-type: 'image'
+          scan-ref: 'pedroaugustoengineer/bookstore-virtual-assistant-ai-api:v${{ github.run_number }}'
+          format: table
+          output: 'trivy-docker-results.txt'
+          severity: UNKNOWN,CRITICAL,HIGH,MEDIUM,LOW
+          hide-progress: true
+
+      - name: Publish Trivy Output to Summary
+        run: |
+          if [[ -s trivy-docker-results.txt ]]; then
+            {
+              echo "### Security Output (Docker Image)"
+              echo "<details><summary>Click to expand</summary>"
+              echo ""
+              cat trivy-docker-results.txt
+              echo "</details>"   
+            } >> $GITHUB_STEP_SUMMARY
+          fi
 
       - name: Set K8s Cluster context
         uses: azure/k8s-set-context@v4
@@ -160,6 +193,51 @@ jobs:
     steps:
       - name: Retrieve and Copy the repository code
         uses: actions/checkout@v4
+
+      - name: Run Trivy vulnerability scanner (fs)
+        uses: aquasecurity/trivy-action@0.28.0
+        with:
+          scan-type: 'fs'
+          scan-ref: '.'
+          format: table
+          scanners: 'vuln,secret,misconfig'
+          output: trivy-results.txt
+          severity: UNKNOWN,CRITICAL,HIGH,MEDIUM,LOW
+          hide-progress: true
+
+      - name: Publish Trivy Output to Summary
+        run: |
+          if [[ -s trivy-results.txt ]]; then
+            {
+              echo "### Security Output (File System)"
+              echo "<details><summary>Click to expand</summary>"
+              echo ""
+              cat trivy-results.txt
+              echo "</details>"   
+            } >> $GITHUB_STEP_SUMMARY
+          fi
+      
+      - name: Run Trivy vulnerability scanner (Docker Image)
+        uses: aquasecurity/trivy-action@0.28.0
+        with:
+          scan-type: 'image'
+          scan-ref: 'pedroaugustoengineer/bookstore-virtual-assistant-ai-api:v${{ github.run_number }}'
+          format: table
+          output: 'trivy-docker-results.txt'
+          severity: UNKNOWN,CRITICAL,HIGH,MEDIUM,LOW
+          hide-progress: true
+
+      - name: Publish Trivy Output to Summary
+        run: |
+          if [[ -s trivy-docker-results.txt ]]; then
+            {
+              echo "### Security Output (Docker Image)"
+              echo "<details><summary>Click to expand</summary>"
+              echo ""
+              cat trivy-docker-results.txt
+              echo "</details>"   
+            } >> $GITHUB_STEP_SUMMARY
+          fi
 
       - name: Set K8s Cluster context
         uses: azure/k8s-set-context@v4
