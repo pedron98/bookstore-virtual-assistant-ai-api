@@ -57,7 +57,7 @@ jobs:
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
-      
+
       - name: Run Trivy vulnerability scanner (fs)
         uses: aquasecurity/trivy-action@0.28.0
         with:
@@ -117,8 +117,8 @@ jobs:
               cat trivy-docker-results.txt
               echo "</details>"   
             } >> $GITHUB_STEP_SUMMARY
-          fi
-      
+          fi     
+        
   cd-developer:
     runs-on: ubuntu-latest
     environment: developer
@@ -274,5 +274,3 @@ jobs:
           manifests: |
             ./k8s/deployment.yaml
           images: 'pedroaugustoengineer/bookstore-virtual-assistant-ai-api:v${{ github.run_number }}'
-
-
