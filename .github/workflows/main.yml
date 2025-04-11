@@ -47,7 +47,7 @@ jobs:
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
-        run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:5.1.0.4751:sonar -Dsonar.projectKey=bookstore-virtual-assistant-ai-api
+        run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:5.1.0.4751:sonar -Dsonar.projectKey=bookstore-virtual-assistant-ai-api-homolog
 
       - name: SonarQube Quality Gate check
         id: sonarqube-quality-gate-check
@@ -58,8 +58,9 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
       
-  cd:
+  cd-developer:
     runs-on: ubuntu-latest
+    environment: developer
     needs: [ci]
     steps:
       - name: Retrieve and Copy the repository code
@@ -147,6 +148,51 @@ jobs:
       - name: Apply Deployment
         uses: Azure/k8s-deploy@v5
         with:
+          namespace: "developer"
+          manifests: |
+            ./k8s/deployment.yaml
+          images: 'pedroaugustoengineer/bookstore-virtual-assistant-ai-api:v${{ github.run_number }}'
+
+  cd-homolog:
+    runs-on: ubuntu-latest
+    environment: homolog
+    needs: [ci]
+    steps:
+      - name: Retrieve and Copy the repository code
+        uses: actions/checkout@v4
+
+      - name: Set K8s Cluster context
+        uses: azure/k8s-set-context@v4
+        with:
+          method: kubeconfig
+          kubeconfig: ${{ secrets.K8S_CONFIG }}
+      
+      - name: Apply Deployment
+        uses: Azure/k8s-deploy@v5
+        with:
+          namespace: "homolog"
+          manifests: |
+            ./k8s/deployment.yaml
+          images: 'pedroaugustoengineer/bookstore-virtual-assistant-ai-api:v${{ github.run_number }}'
+
+  cd-production:
+    runs-on: ubuntu-latest
+    environment: production
+    needs: [cd-homolog]
+    steps:
+      - name: Retrieve and Copy the repository code
+        uses: actions/checkout@v4
+
+      - name: Set K8s Cluster context
+        uses: azure/k8s-set-context@v4
+        with:
+          method: kubeconfig
+          kubeconfig: ${{ secrets.K8S_CONFIG }}
+      
+      - name: Apply Deployment
+        uses: Azure/k8s-deploy@v5
+        with:
+          # namespace: "production"
           manifests: |
             ./k8s/deployment.yaml
           images: 'pedroaugustoengineer/bookstore-virtual-assistant-ai-api:v${{ github.run_number }}'
