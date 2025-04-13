@@ -29,34 +29,34 @@ jobs:
 #        working-directory: ./
 #        run: mvn -Dtest=integrationtests/** test
       
-      - name: Cache SonarQube packages
-        uses: actions/cache@v4
-        with:
-          path: ~/.sonar/cache
-          key: ${{ runner.os }}-sonar
-          restore-keys: ${{ runner.os }}-sonar
-      
-      - name: Cache Maven packages
-        uses: actions/cache@v4
-        with:
-          path: ~/.m2
-          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
-          restore-keys: ${{ runner.os }}-m2
-      
-      - name: Build and analyze
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
-        run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:5.1.0.4751:sonar -Dsonar.projectKey=bookstore-virtual-assistant-ai-api-homolog
-
-      - name: SonarQube Quality Gate check
-        id: sonarqube-quality-gate-check
-        uses: sonarsource/sonarqube-quality-gate-action@v1.1.0
-        with:
-          scanMetadataReportFile: target/sonar/report-task.txt
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+#      - name: Cache SonarQube packages
+#        uses: actions/cache@v4
+#        with:
+#          path: ~/.sonar/cache
+#          key: ${{ runner.os }}-sonar
+#          restore-keys: ${{ runner.os }}-sonar
+#      
+#      - name: Cache Maven packages
+#        uses: actions/cache@v4
+#        with:
+#          path: ~/.m2
+#          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+#          restore-keys: ${{ runner.os }}-m2
+#      
+#      - name: Build and analyze
+#        env:
+#          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+#          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+#        run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:5.1.0.4751:sonar -Dsonar.projectKey=bookstore-virtual-assistant-ai-api-homolog
+#
+#      - name: SonarQube Quality Gate check
+#        id: sonarqube-quality-gate-check
+#        uses: sonarsource/sonarqube-quality-gate-action@v1.1.0
+#        with:
+#          scanMetadataReportFile: target/sonar/report-task.txt
+#        env:
+#          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+#          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
 
       - name: Run Trivy vulnerability scanner (fs)
         uses: aquasecurity/trivy-action@0.28.0
@@ -127,51 +127,6 @@ jobs:
       - name: Retrieve and Copy the repository code
         uses: actions/checkout@v4     
 
-      - name: Run Trivy vulnerability scanner (fs)
-        uses: aquasecurity/trivy-action@0.28.0
-        with:
-          scan-type: 'fs'
-          scan-ref: '.'
-          format: table
-          scanners: 'vuln,secret,misconfig'
-          output: trivy-results.txt
-          severity: UNKNOWN,CRITICAL,HIGH,MEDIUM,LOW
-          hide-progress: true
-
-      - name: Publish Trivy Output to Summary
-        run: |
-          if [[ -s trivy-results.txt ]]; then
-            {
-              echo "### Security Output (File System)"
-              echo "<details><summary>Click to expand</summary>"
-              echo ""
-              cat trivy-results.txt
-              echo "</details>"   
-            } >> $GITHUB_STEP_SUMMARY
-          fi
-      
-      - name: Run Trivy vulnerability scanner (Docker Image)
-        uses: aquasecurity/trivy-action@0.28.0
-        with:
-          scan-type: 'image'
-          scan-ref: 'pedroaugustoengineer/bookstore-virtual-assistant-ai-api:v${{ github.run_number }}'
-          format: table
-          output: 'trivy-docker-results.txt'
-          severity: UNKNOWN,CRITICAL,HIGH,MEDIUM,LOW
-          hide-progress: true
-
-      - name: Publish Trivy Output to Summary
-        run: |
-          if [[ -s trivy-docker-results.txt ]]; then
-            {
-              echo "### Security Output (Docker Image)"
-              echo "<details><summary>Click to expand</summary>"
-              echo ""
-              cat trivy-docker-results.txt
-              echo "</details>"   
-            } >> $GITHUB_STEP_SUMMARY
-          fi
-
       - name: Set K8s Cluster context
         uses: azure/k8s-set-context@v4
         with:
@@ -181,7 +136,7 @@ jobs:
       - name: Apply Deployment
         uses: Azure/k8s-deploy@v5
         with:
-          namespace: "developer"
+          namespace: "bookstore-virtual-assistant-ai-api-developer"
           manifests: |
             ./k8s/deployment.yaml
           images: 'pedroaugustoengineer/bookstore-virtual-assistant-ai-api:v${{ github.run_number }}'
@@ -194,51 +149,6 @@ jobs:
       - name: Retrieve and Copy the repository code
         uses: actions/checkout@v4
 
-      - name: Run Trivy vulnerability scanner (fs)
-        uses: aquasecurity/trivy-action@0.28.0
-        with:
-          scan-type: 'fs'
-          scan-ref: '.'
-          format: table
-          scanners: 'vuln,secret,misconfig'
-          output: trivy-results.txt
-          severity: UNKNOWN,CRITICAL,HIGH,MEDIUM,LOW
-          hide-progress: true
-
-      - name: Publish Trivy Output to Summary
-        run: |
-          if [[ -s trivy-results.txt ]]; then
-            {
-              echo "### Security Output (File System)"
-              echo "<details><summary>Click to expand</summary>"
-              echo ""
-              cat trivy-results.txt
-              echo "</details>"   
-            } >> $GITHUB_STEP_SUMMARY
-          fi
-      
-      - name: Run Trivy vulnerability scanner (Docker Image)
-        uses: aquasecurity/trivy-action@0.28.0
-        with:
-          scan-type: 'image'
-          scan-ref: 'pedroaugustoengineer/bookstore-virtual-assistant-ai-api:v${{ github.run_number }}'
-          format: table
-          output: 'trivy-docker-results.txt'
-          severity: UNKNOWN,CRITICAL,HIGH,MEDIUM,LOW
-          hide-progress: true
-
-      - name: Publish Trivy Output to Summary
-        run: |
-          if [[ -s trivy-docker-results.txt ]]; then
-            {
-              echo "### Security Output (Docker Image)"
-              echo "<details><summary>Click to expand</summary>"
-              echo ""
-              cat trivy-docker-results.txt
-              echo "</details>"   
-            } >> $GITHUB_STEP_SUMMARY
-          fi
-
       - name: Set K8s Cluster context
         uses: azure/k8s-set-context@v4
         with:
@@ -248,7 +158,7 @@ jobs:
       - name: Apply Deployment
         uses: Azure/k8s-deploy@v5
         with:
-          namespace: "homolog"
+          namespace: "bookstore-virtual-assistant-ai-api-homolog"
           manifests: |
             ./k8s/deployment.yaml
           images: 'pedroaugustoengineer/bookstore-virtual-assistant-ai-api:v${{ github.run_number }}'
@@ -270,7 +180,7 @@ jobs:
       - name: Apply Deployment
         uses: Azure/k8s-deploy@v5
         with:
-          # namespace: "production"
+          namespace: "bookstore-virtual-assistant-ai-api-production"
           manifests: |
             ./k8s/deployment.yaml
           images: 'pedroaugustoengineer/bookstore-virtual-assistant-ai-api:v${{ github.run_number }}'
