@@ -4,7 +4,6 @@ apiVersion: v1
 kind: Secret
 metadata:
   name: bookstore-virtual-assistant-ai-api-config
-type: Opaque
 stringData:
   OPENAI_API_KEY: default
 ---
