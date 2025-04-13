@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: bookstore-virtual-assistant-ai-api
 spec:
-  replicas: 4
+  replicas: 2
   selector:
     matchLabels:
       app: bookstore-virtual-assistant-ai-api
@@ -17,9 +17,10 @@ spec:
           image: pedroaugustoengineer/bookstore-virtual-assistant-ai-api:v${{ github.run_number }}
           ports:
             - containerPort: 8080
-          env:
-            - name: OPENAI_API_KEY
-              value: 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
+          envFrom:
+            - secretRef:
+                name: bookstore-virtual-assistant-ai-api-config
+              
 ---
 apiVersion: v1
 kind: Service
@@ -31,5 +32,6 @@ spec:
     - port: 8080
       targetPort: 8080
   selector:
-    app: bookstore-virtual-assitant-ai-api
+    app: bookstore-virtual-assistant-ai-api
+
 
