@@ -133,13 +133,13 @@ jobs:
           method: kubeconfig
           kubeconfig: ${{ secrets.K8S_CONFIG }}
 
-      - name: Replacing Secret Value      
+      - name: Add or Replace Secret
         uses: azure/k8s-create-secret@v2
         with:
           namespace: 'bookstore-virtual-assistant-ai-api-developer'
           secret-type: 'generic'
           secret-name: bookstore-virtual-assistant-ai-api-config
-          data: ${{ secrets.OPENAI_API_KEY }}
+          stringData: ${{ secrets.OPENAI_API_KEY }}
       
       - name: Apply Deployment
         uses: Azure/k8s-deploy@v5
