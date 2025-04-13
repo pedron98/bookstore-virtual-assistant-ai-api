@@ -133,6 +133,14 @@ jobs:
           method: kubeconfig
           kubeconfig: ${{ secrets.K8S_CONFIG }}
       
+      - name: Create or Replace Secret
+        uses: azure/k8s-create-secret@v2
+        with:
+          namespace: 'bookstore-virtual-assistant-ai-api-developer'
+          secret-type: 'generic'
+          secret-name: bookstore-virtual-assistant-ai-api-config
+          string-data: ${{ secrets.OPENAI_API_KEY }}
+      
       - name: Apply Deployment
         uses: Azure/k8s-deploy@v5
         with:
@@ -141,13 +149,6 @@ jobs:
             ./k8s/deployment.yaml
           images: 'pedroaugustoengineer/bookstore-virtual-assistant-ai-api:v${{ github.run_number }}'
 
-      - name: Add or Replace Secret
-        uses: azure/k8s-create-secret@v2
-        with:
-          namespace: 'bookstore-virtual-assistant-ai-api-developer'
-          secret-type: 'generic'
-          secret-name: bookstore-virtual-assistant-ai-api-config
-          string-data: ${{ secrets.OPENAI_API_KEY }}
 
   cd-homolog:
     runs-on: ubuntu-latest
@@ -163,6 +164,14 @@ jobs:
           method: kubeconfig
           kubeconfig: ${{ secrets.K8S_CONFIG }}
       
+      - name: Create or Replace Secret
+        uses: azure/k8s-create-secret@v2
+        with:
+          namespace: 'bookstore-virtual-assistant-ai-api-homolog'
+          secret-type: 'generic'
+          secret-name: bookstore-virtual-assistant-ai-api-config
+          string-data: ${{ secrets.OPENAI_API_KEY }}
+
       - name: Apply Deployment
         uses: Azure/k8s-deploy@v5
         with:
@@ -171,13 +180,6 @@ jobs:
             ./k8s/deployment.yaml
           images: 'pedroaugustoengineer/bookstore-virtual-assistant-ai-api:v${{ github.run_number }}'
   
-      - name: Add or Replace Secret
-        uses: azure/k8s-create-secret@v2
-        with:
-          namespace: 'bookstore-virtual-assistant-ai-api-homolog'
-          secret-type: 'generic'
-          secret-name: bookstore-virtual-assistant-ai-api-config
-          string-data: ${{ secrets.OPENAI_API_KEY }}
 
   cd-production:
     runs-on: ubuntu-latest
@@ -193,6 +195,14 @@ jobs:
           method: kubeconfig
           kubeconfig: ${{ secrets.K8S_CONFIG }}
       
+      - name: Create or Replace Secret
+        uses: azure/k8s-create-secret@v2
+        with:
+          namespace: 'bookstore-virtual-assistant-ai-api-production'
+          secret-type: 'generic'
+          secret-name: bookstore-virtual-assistant-ai-api-config
+          string-data: ${{ secrets.OPENAI_API_KEY }}
+      
       - name: Apply Deployment
         uses: Azure/k8s-deploy@v5
         with:
@@ -200,12 +210,4 @@ jobs:
           manifests: |
             ./k8s/deployment.yaml
           images: 'pedroaugustoengineer/bookstore-virtual-assistant-ai-api:v${{ github.run_number }}'
-
-      - name: Add or Replace Secret
-        uses: azure/k8s-create-secret@v2
-        with:
-          namespace: 'bookstore-virtual-assistant-ai-api-production'
-          secret-type: 'generic'
-          secret-name: bookstore-virtual-assistant-ai-api-config
-          string-data: ${{ secrets.OPENAI_API_KEY }}
 
