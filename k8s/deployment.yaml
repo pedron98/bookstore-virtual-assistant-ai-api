@@ -20,7 +20,7 @@ spec:
         - name: bookstore-virtual-assistant-ai-api
           image: pedroaugustoengineer/bookstore-virtual-assistant-ai-api:v${{ github.run_number }}
           ports:
-            - containerPort: 80
+            - containerPort: 8080
           envFrom:
             - secretRef:
                 name: bookstore-virtual-assistant-ai-api-config
@@ -34,7 +34,7 @@ spec:
   type: LoadBalancer
   ports:
     - port: 80
-      targetPort: 80
+      targetPort: 8080
   selector:
     app: bookstore-virtual-assistant-ai-api
 
