@@ -1,5 +1,5 @@
 cors:
-    originPatterns: http://localhost:8080,http://134.199.177.28:8080,http://178.128.134.167:8080,http://24.199.65.172:8080
+    originPatterns: http://localhost:8080
 spring:
     application:
         name: bookstore-virtual-assistant-ai
