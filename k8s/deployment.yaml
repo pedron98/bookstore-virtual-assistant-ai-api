@@ -9,6 +9,10 @@ spec:
       app: bookstore-virtual-assistant-ai-api
   template:
     metadata:
+      annotations:
+        prometheus.io/scrape: "true" # habilities the prometheus
+        prometheus.io/path: /metrics # definies the path to the collected metrics
+        prometheus.io/port: "80"  # definies the port of the prometheus server 
       labels:
         app: bookstore-virtual-assistant-ai-api
     spec:
